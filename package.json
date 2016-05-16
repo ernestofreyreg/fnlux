@@ -1,6 +1,6 @@
 {
-  "name": "fnux",
-  "description": "Bare bones flux library for reusable complex components",
+  "name": "fnlux",
+  "description": "The functional redux-like flux alternative for complex reusable components.",
   "version": "0.0.1",
   "author": "Ernesto Freyre",
   "keywords": [
