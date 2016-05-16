@@ -18,10 +18,7 @@
     "mocha": "^2.4.5"
   },
   "scripts": {
-    "lint": "./node_modules/eslint/bin/eslint.js ./dev/**/*.js ./src/**/*.js",
     "test:unit": "NODE_ENV=test mocha --timeout 8000 --compilers js:babel-register -b test/unit",
-    "test": "npm run test:unit",
-    "validate": "npm ls",
-    "build-deploy": "NODE_ENV=production webpack --config dev/webpack.live.config.js"
+    "test": "npm run test:unit"
   }
 }
