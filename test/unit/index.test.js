@@ -22,7 +22,6 @@ describe('fnux basic store', () => {
     return new Promise(function(fullfiled, rejected) {
       setTimeout(() => {
         const action = {a: 6, b: 7, time: time};
-        console.log('Fullfiled:', action);
         fullfiled(action);
       }, time || 5000);
     });

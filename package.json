@@ -8,6 +8,10 @@
     "javascript",
     "react"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ernestofreyreg/fnlux.git"
+  },
   "main": "src/index.js",
   "license": "BSD",
   "devDependencies": {
