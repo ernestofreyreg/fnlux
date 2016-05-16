@@ -1,5 +1,5 @@
 
-export const createFnux = function(initialState, reducers, setState) {
+export const createFnlux = function(initialState, reducers, setState) {
   let state;
 
   const applyReducers = function(action) {
@@ -13,8 +13,10 @@ export const createFnux = function(initialState, reducers, setState) {
   };
 
   const applyAsync = function(promises) {
-    return Promise.all(promises).then(action => {
-      applyReducers(action);
+    return Promise.all(promises).then(actions => {
+      actions.forEach(action => {
+        applyReducers(action);
+      });
     });
   };
 

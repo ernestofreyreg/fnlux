@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import { createFnux } from '../../src/index';
+import { createFnlux } from '../../src/index';
 
 describe('fnux basic store', () => {
   const sumReducer = function(state, action) {
@@ -21,19 +21,19 @@ describe('fnux basic store', () => {
   const asyncAction = function(time) {
     return new Promise(function(fullfiled, rejected) {
       setTimeout(() => {
-        const action = {a: 6, b: 7, time: time};
+        const action = {a: 6, b: 7, time: time || 5000};
         fullfiled(action);
       }, time || 5000);
     });
   };
 
   it('creates a empty fnux', () => {
-    const flux = createFnux();
+    const flux = createFnlux();
     expect(flux).to.be.ok();
   });
 
   it('creates a initial state only fnux', () => {
-    const flux = createFnux({});
+    const flux = createFnlux({});
     flux.apply({a: 3, b: 5});
   });
 
@@ -45,7 +45,7 @@ describe('fnux basic store', () => {
       }
     };
 
-    const flux = createFnux({}, [sumReducer], setState);
+    const flux = createFnlux({}, [sumReducer], setState);
     flux.apply({a: 3, b: 5});
   });
 
@@ -54,7 +54,7 @@ describe('fnux basic store', () => {
       expect(state).to.be.ok();
     };
 
-    const flux = createFnux({}, [sumReducer], setState);
+    const flux = createFnlux({}, [sumReducer], setState);
     flux.apply({a: 3, b: 5});
     flux.apply({a: 13, b: 15});
     flux.apply({a: 29, b: 14});
@@ -70,7 +70,7 @@ describe('fnux basic store', () => {
       }
     };
 
-    const flux = createFnux({}, [sumReducer], setState);
+    const flux = createFnlux({}, [sumReducer], setState);
     flux.apply({a: 3, b: 5});
     flux.reducers.push(subReducer);
     finalApply = true;
@@ -82,7 +82,7 @@ describe('fnux basic store', () => {
       expect(state).to.be.ok();
     };
 
-    const flux = createFnux({}, [sumReducer], setState);
+    const flux = createFnlux({}, [sumReducer], setState);
     const promise = asyncAction();
     return flux.applyAsync([promise]);
   });
@@ -92,7 +92,7 @@ describe('fnux basic store', () => {
       expect(state).to.be.ok();
     };
 
-    const flux = createFnux({}, [sumReducer], setState);
+    const flux = createFnlux({}, [sumReducer], setState);
     const promise3 = asyncAction(3000);
     const promise5 = asyncAction(5000);
     return flux.applyAsync([promise3, promise5]);
