@@ -1,4 +1,4 @@
-# fnux
+# fnlux
 
 [![Build Status](https://travis-ci.org/ernestofreyreg/fnlux.svg?branch=master)](https://travis-ci.org/ernestofreyreg/fnlux)
 
