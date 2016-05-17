@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import { createFnlux } from '../../src/index';
 
-describe('fnux basic store', () => {
+describe('fnlux basic store', () => {
   const sumReducer = function(state, action) {
     if (!action.a || !action.b) {
       return state;
@@ -27,17 +27,29 @@ describe('fnux basic store', () => {
     });
   };
 
-  it('creates a empty fnux', () => {
+  it('creates a empty fnlux', () => {
     const flux = createFnlux();
     expect(flux).to.be.ok();
   });
 
-  it('creates a initial state only fnux', () => {
+  it('creates a initial state only fnlux', () => {
     const flux = createFnlux({});
     flux.apply({a: 3, b: 5});
   });
 
-  it('creates a basic fnux', () => {
+  it('creates a initial state fnlux', () => {
+    const setState = function(state) {
+      expect(state).to.be.ok();
+      expect(state.c).to.be(8);
+      expect(state.d).to.be(2);
+    };
+
+    const flux = createFnlux({d: 2}, [sumReducer], setState);
+    flux.apply({a: 3, b: 5});
+    expect(flux.state().c).to.be(8);
+  });
+
+  it('creates a basic fnlux', () => {
     const setState = function(state) {
       expect(state).to.be.ok();
       if (state.c) {
@@ -58,6 +70,7 @@ describe('fnux basic store', () => {
     flux.apply({a: 3, b: 5});
     flux.apply({a: 13, b: 15});
     flux.apply({a: 29, b: 14});
+    expect(flux.state().c).to.be(43);
   });
 
   it('add reducer to reducer list after creation', () => {
@@ -96,5 +109,25 @@ describe('fnux basic store', () => {
     const promise3 = asyncAction(3000);
     const promise5 = asyncAction(5000);
     return flux.applyAsync([promise3, promise5]);
+  });
+
+  it('undo', () => {
+    const setStateBuilder = function() {
+      const states = [];
+
+      return function(state) {
+        states.push(state);
+        expect(state).to.be.ok();
+        if (states.length === 3) {
+          expect(states[0].c === states[2].c).to.be(true);
+          expect(states[0].c === states[1].c).to.be(false);
+        }
+      }
+    };
+
+    const flux = createFnlux({}, [sumReducer], setStateBuilder());
+    flux.apply({a: 3, b: 5});
+    flux.apply({a: 13, b: 15});
+    flux.undo();
   });
 });

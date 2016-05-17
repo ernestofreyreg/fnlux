@@ -1,9 +1,9 @@
 
 export const createFnlux = function(initialState, reducers, setState) {
-  let state;
+  const state = [initialState];
 
   const applyReducers = function(action) {
-    let newState = state;
+    let newState = state[state.length - 1];
 
     (reducers || []).forEach(reducer => {
       newState = reducer(newState, action);
@@ -21,16 +21,21 @@ export const createFnlux = function(initialState, reducers, setState) {
   };
 
   const setInternalState = function(newState) {
-    state = newState;
-    setState && setState(state);
+    state.push(newState);
+    setState && setState(newState);
   };
 
-  setInternalState(initialState);
+  const undo = function() {
+    state.pop();
+    const newState = state.pop();
+    setInternalState(newState);
+  };
 
   return {
     apply: applyReducers,
     applyAsync: applyAsync,
     reducers: reducers,
-    state: state
+    state: () => state[state.length - 1],
+    undo: undo
   };
 };
