@@ -18,11 +18,26 @@ describe('fnlux basic store', () => {
     return Object.assign({}, state, {d: action.a - action.b});
   };
 
-  const asyncAction = function(time) {
+  const asyncLastReducer = function(state, action) {
+    if (!action.type === 'LAST') {
+      return state;
+    }
+
+    return Object.assign({}, state, {last: true});
+  };
+
+  const asyncAction = function(time, action) {
     return new Promise(function(fullfiled, rejected) {
       setTimeout(() => {
-        const action = {a: 6, b: 7, time: time || 5000};
-        fullfiled(action);
+        fullfiled(action || {a: 6, b: 7, time: time || 5000});
+      }, time || 5000);
+    });
+  };
+
+  const failingAsyncAction = function(time) {
+    return new Promise(function(fullfiled, rejected) {
+      setTimeout(() => {
+        rejected(new Error('Basic error'));
       }, time || 5000);
     });
   };
@@ -93,22 +108,46 @@ describe('fnlux basic store', () => {
   it('apply async action', () => {
     const setState = function(state) {
       expect(state).to.be.ok();
+      console.log(state);
     };
 
     const flux = createFnlux({}, [sumReducer], setState);
     const promise = asyncAction();
-    return flux.applyAsync([promise]);
+    return flux.applyAsync(promise);
   });
 
   it('apply several async actions', () => {
+    const setStateBuilder = function() {
+      let setStateCalls = 0;
+
+      return function (state) {
+        setStateCalls += 1;
+        expect(state).to.be.ok();
+        expect(state.c).to.be(13);
+        expect(state.d).to.be(-1);
+        console.log(state);
+        expect(setStateCalls).to.be(1);
+      };
+    };
+
+    const flux = createFnlux({}, [sumReducer, subReducer, asyncLastReducer], setStateBuilder());
+    const promise3 = asyncAction(3000);
+    const promise5 = asyncAction(5000);
+    return flux.applyAsync([promise3, promise5, {type: 'LAST'}]);
+  });
+  
+  it('apply a failed promise and catch it', () => {
     const setState = function(state) {
       expect(state).to.be.ok();
     };
 
     const flux = createFnlux({}, [sumReducer], setState);
-    const promise3 = asyncAction(3000);
-    const promise5 = asyncAction(5000);
-    return flux.applyAsync([promise3, promise5]);
+    const failingPromise = failingAsyncAction(3000);
+    const async = flux.applyAsync(failingPromise);
+
+    return async.catch((error) => {
+      expect(error).to.be.ok();
+    });
   });
 
   it('undo', () => {
@@ -128,6 +167,25 @@ describe('fnlux basic store', () => {
     const flux = createFnlux({}, [sumReducer], setStateBuilder());
     flux.apply({a: 3, b: 5});
     flux.apply({a: 13, b: 15});
+    flux.undo();
+  });
+
+  it('too many undos wont broke the store', () => {
+    const setStateBuilder = function() {
+      const states = [];
+
+      return function(state) {
+        states.push(state);
+        expect(state).to.be.ok();
+      }
+    };
+
+    const flux = createFnlux({}, [sumReducer], setStateBuilder());
+    flux.apply({a: 3, b: 5});
+    flux.apply({a: 13, b: 15});
+    flux.undo();
+    flux.undo();
+    flux.undo();
     flux.undo();
   });
 });

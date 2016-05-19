@@ -82,6 +82,48 @@ export default class App extends React.Component {
 
 The `apply()` function accepts any type of argument, it depends only on how you make your reducer functions.
 
+### Async state changes
+
+**fnlux** Adds a simple way to create and apply actions events asynchronically using Promises. Create a promise that returns the action and use the `applyAsync` method.
+
+```
+const loadServerData = function(params) {
+  return axios.get(API_ENDPOINT, params).then(response => {
+  	return {type: 'LOADED_SERVER_DATA', data: response.data};
+  }).catch(error => {
+    return {type: 'ERROR_SERVER_DATA', error: error};
+  });
+};
+
+
+export default class ServerComponent extends React.Component {
+
+  handleLoadServerData = () => {
+  	this.fnlux.applyAsync(loadServerData(params));
+  }
+
+}
+
+```
+
+Its posible to group several actions asynchronically by using `applyAsync` and passing an array of Promises.
+
+```
+this.fnlux.applyAsync([loadServerData(dataId), loadUserInfo(userId)]);
+```
+
+If any of the promises fails then all fails (Promise.all) and no action is applied to the **fnlux** state. If the Promise(s) is(are) fullfiled then all the actions will be applied in order (only the last one will trigger a setState change on the **fnlux** attached component)
+
+You can also catch the rejection by concatenating a `catch` method on the returned promise.
+
+```
+this.fnlux.applyAsync(
+  [loadServerData(dataId), loadUserInfo(userId), {type: 'LOADED_DATA'}]
+).catch(error => {
+  this.fnlux.apply('LOADING_DATA_ERROR');
+});
+```
+
 ### Undo
 
 By default **fnlux** supports undo function. Just call the proper method.
