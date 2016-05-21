@@ -156,5 +156,19 @@ export default class MyComponent extends React.Component {
   ...
 }  
 ```  
- 
+
+Any first level properties from your immutable state Map will be part of the components state, mantaining their immutable properties. Also, reducers using immutable Map state are easier to craft.
+
+```
+export const startGameReducer = function(state, action) {
+  if (action !== 'START_GAME') {
+    return state;
+  }
+
+  return state
+  			.set('playing', true)
+  			.set('loading', false)
+  			.set('canvas', createGameCanvas(10, 10));
+};
+```  
  
