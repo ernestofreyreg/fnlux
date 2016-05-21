@@ -131,3 +131,30 @@ By default **fnlux** supports undo function. Just call the proper method.
 ```
 this.fnlux.undo();
 ```
+
+### Immutable Store
+
+[Immutable.js](https://facebook.github.io/immutable-js/) is an amazing library, you
+ should definitively use it. With **fnlux** is particulary easy to use immutable stores. Instead of passing a initial state as a plain JS object convert it to an immutable Map, create a special setState function that takes the Map state and shallow convert it to an object (using `toObject()`) and finally asign the initial state the same shallow object.
+ 
+```
+export default class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.fnlux = createFnlux(
+      Immutable.Map({...}),
+      [componentReducer1, componentReducer2, ...],
+      this.setFnluxState
+    );
+    this.state = this.fnlux.state().toObject();
+  }
+
+  setFnluxState = (immutableState) => {
+    this.setState(immutableState.toObject());
+  };
+  
+  ...
+}  
+```  
+ 
+ 
