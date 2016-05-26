@@ -1,6 +1,7 @@
 
 export const createFnlux = function(initialState, reducers, setState) {
   const state = [initialState];
+  const asyncEvents = [];
 
   const apply = function(action) {
     setInternalState(applyReducers(action, state[state.length - 1]));
@@ -12,22 +13,38 @@ export const createFnlux = function(initialState, reducers, setState) {
     }, oldState);
   };
 
+  function asyncPromiseExists(asyncPromise) {
+    return asyncEvents.indexOf(asyncPromise) >= 0;
+  }
+
   const applyAsync = function(promises) {
-    return Promise.all(Array.isArray(promises) ? promises : [promises])
+    const asyncPromise = Promise.all(Array.isArray(promises) ? promises : [promises])
       .then(actions => {
-        setInternalState(
-          actions.reduce((previousState, action) => {
-            return applyReducers(action, previousState);
-          }, state[state.length - 1])
-        );
+        if (asyncPromiseExists(asyncPromise)) {
+          setInternalState(
+            actions.reduce((previousState, action) => {
+              return applyReducers(action, previousState);
+            }, state[state.length - 1])
+          );
+        }
       });
+
+    asyncEvents.push(asyncPromise);
+    return asyncPromise;
+  };
+
+  const cancelAsync = function(asyncPromise) {
+    const index = asyncEvents.indexOf(asyncPromise);
+    if (index >= 0) {
+      asyncEvents.splice(index, 1);
+    }
   };
 
   const undo = function() {
     if (state.length < 2) {
       return;
     }
-    
+
     state.pop();
     const newState = state.pop();
     setInternalState(newState);
@@ -41,6 +58,7 @@ export const createFnlux = function(initialState, reducers, setState) {
   return {
     apply: apply,
     applyAsync: applyAsync,
+    cancelAsync: cancelAsync,
     reducers: reducers,
     state: () => state[state.length - 1],
     undo: undo

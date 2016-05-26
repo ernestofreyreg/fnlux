@@ -108,7 +108,6 @@ describe('fnlux basic store', () => {
   it('apply async action', () => {
     const setState = function(state) {
       expect(state).to.be.ok();
-      console.log(state);
     };
 
     const flux = createFnlux({}, [sumReducer], setState);
@@ -125,7 +124,6 @@ describe('fnlux basic store', () => {
         expect(state).to.be.ok();
         expect(state.c).to.be(13);
         expect(state.d).to.be(-1);
-        console.log(state);
         expect(setStateCalls).to.be(1);
       };
     };
@@ -148,6 +146,22 @@ describe('fnlux basic store', () => {
     return async.catch((error) => {
       expect(error).to.be.ok();
     });
+  });
+
+  it('canceling and async action', () => {
+    const setState = function(state) {
+      // SetState should not be called never
+      expect().to.fail();
+    };
+
+    const flux = createFnlux({}, [sumReducer], setState);
+    const promise = asyncAction(7000);
+    const async = flux.applyAsync(promise);
+
+    setTimeout(() => {
+      flux.cancelAsync(async);
+    }, 3000);
+    return async;
   });
 
   it('undo', () => {

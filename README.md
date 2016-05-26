@@ -124,6 +124,24 @@ this.fnlux.applyAsync(
 });
 ```
 
+#### Canceling Async Promises (^0.1.5)
+
+Canceling an async promise is not actually possible, it is not in the nature of Promises to be canceled. So, you would assume that once you fire an async event nothing can prevent it from affecting the store/app state. Since version 0.1.5 you could, prevent the state of an async event to mutate the store/app state. We added the `cancelAsync(...)` method.
+
+```
+this.loadingData = this.fnlux.applyAsync(
+  [loadServerData(dataId), loadUserInfo(userId), {type: 'LOADED_DATA'}]
+).catch(error => {
+  this.fnlux.apply('LOADING_DATA_ERROR');
+});
+
+...
+
+this.fnlux.cancelAsync(this.loadingData);
+```
+
+This will prevent the async event once resolved to mutate store/app state. It won't nevertheless prevent catching errors.
+
 ### Undo
 
 By default **fnlux** supports undo function. Just call the proper method.
