@@ -1,5 +1,5 @@
 
-export const createFnlux = function(initialState, reducers, setState) {
+export default function createFnlux(initialState, reducers, setState) {
   const state = [initialState];
   const asyncEvents = [];
 
