@@ -5,7 +5,7 @@
 The functional redux-like flux alternative for complex reusable 
 components.
 
-## Updated in version ^0.1.6 **Breaking change**
+## Updated in version ^1.0.0 **Breaking change**
 
 In versions 0.1.5 and lower the ES6 way to import the createFnLux function into
 your projects was like:
@@ -14,7 +14,7 @@ your projects was like:
 import { createFnlux } from 'fnlux';
 ```
 
-In versions 0.1.6 and above you have to:
+In versions 1.0.0 and above you have to:
 
 ```
 import createFnLux from 'fnlux';
@@ -25,7 +25,7 @@ import createFnLux from 'fnlux';
 You can create **fnlux** store with the `createFnlux` function, once created you can then apply actions that will get processed by the reducer functions defined:
 
 ```
-import { createFnlux } from 'fnlux';
+import createFnlux from 'fnlux';
 
 const sumReducer = function(state, action) {
 	if (action.type !== 'SUM') {

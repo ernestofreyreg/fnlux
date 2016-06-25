@@ -1,7 +1,7 @@
 {
   "name": "fnlux",
   "description": "The functional redux-like flux alternative for complex reusable components.",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "authors": [
     "Ernesto Freyre <ernestofreyreg@gmail.com> (https://github.com/ernestofreyreg)"
   ],
