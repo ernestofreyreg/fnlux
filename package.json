@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/ernestofreyreg/fnlux/issues"
   },
-  "main": "dist/index.js",
+  "main": "dist/fnlux.js",
   "jsnext:main": "src/index.js",
   "devDependencies": {
     "babel-core": "^6.8.0",

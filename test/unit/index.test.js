@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import { createFnlux } from '../../src/index';
+import createFnlux from '../../src/index';
 
 describe('fnlux basic store', () => {
   const sumReducer = function(state, action) {

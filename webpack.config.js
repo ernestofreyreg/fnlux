@@ -5,7 +5,7 @@ module.exports = {
   },
   output: {
     path: __dirname + '/dist',
-    filename: '[name].min.js',
+    filename: '[name].js',
     library: 'createFnlux',
     libraryTarget: 'umd'
   },
